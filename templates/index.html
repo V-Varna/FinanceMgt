@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="dashboard-header">
+    <h2>Dashboard</h2>
+    <p class="dashboard-sub">Your personal finance summary at a glance</p>
+</div>
+
+<div class="card-container">
+    <div class="card income">
+        <div class="card-icon">💰</div>
+        <h3>Total Income</h3>
+        <p>₹ {{ '{:,.2f}'.format(total_income) }}</p>
+        <a href="/set-income" class="small-btn">Set Income</a>
+    </div>
+    <div class="card expense">
+        <div class="card-icon">🛒</div>
+        <h3>Total Expense</h3>
+        <p>₹ {{ '{:,.2f}'.format(total_expense) }}</p>
+    </div>
+    <div class="card balance">
+        <div class="card-icon">📊</div>
+        <h3>Balance</h3>
+        <p>₹ {{ '{:,.2f}'.format(balance) }}</p>
+    </div>
+</div>
+
+<div class="transactions-section">
+    <h2>All Transactions</h2>
+    {% if transactions %}
+    <table class="transactions-table">
+        <tr>
+            <th>Date</th>
+            <th>Amount</th>
+            <th>Category</th>
+            <th>Description</th>
+            <th>Action</th>
+        </tr>
+        {% for t in transactions %}
+        <tr>
+            <td>{{ t.date.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td class="{{ 'income' if t.amount > 0 else 'expense' }}">{{ t.amount }}</td>
+            <td>{{ t.category }}</td>
+            <td>{{ t.description }}</td>
+            <td>
+                <form method="post" action="/delete/{{ t.id }}" style="display:inline;">
+                    <button type="submit" class="delete-btn" title="Delete">🗑️</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+    {% else %}
+    <div class="empty-state">
+        <p>No transactions yet. Start by adding your first expense!</p>
+        <a href="/add" class="btn">Add Transaction</a>
+    </div>
+    {% endif %}
+</div>
+
+{% if transactions %}
+<a href="/add" class="btn">Add Transaction</a>
+{% endif %}
+{% endblock %}
